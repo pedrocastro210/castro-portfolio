@@ -3,4 +3,4 @@ Allow: /
 Disallow: /demos/
 Disallow: /portfolio
 
-Sitemap: https://SEU-DOMINIO-AQUI.vercel.app/sitemap.xml
+Sitemap: https://castro-portfolio-landing.vercel.app/sitemap.xml

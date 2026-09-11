@@ -3,7 +3,7 @@
 Desenvolvedor full-stack. Sites e landing pages sob medida — com animação
 de verdade, performance e um processo sem letra miúda.
 
-**🔗 [Ver o site ao vivo](https://SEU-DOMINIO-AQUI.vercel.app)** · **💬 [Falar no WhatsApp](https://wa.me/5524974029166?text=Ol%C3%A1!%20Vi%20seu%20portf%C3%B3lio%20no%20GitHub%20e%20quero%20conversar%20sobre%20um%20projeto.)**
+**🔗 [Ver o site ao vivo](https://castro-portfolio-landing.vercel.app)** · **💬 [Falar no WhatsApp](https://wa.me/5524974029166?text=Ol%C3%A1!%20Vi%20seu%20portf%C3%B3lio%20no%20GitHub%20e%20quero%20conversar%20sobre%20um%20projeto.)**
 
 ![React](https://img.shields.io/badge/React-19-149eca?logo=react&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-6-3178c6?logo=typescript&logoColor=white)
