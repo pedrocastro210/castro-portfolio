@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="%BASE_URL%favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0a0a0d" />
+    <meta name="robots" content="index, follow" />
+
+    <!--
+      TROCAR: SEU-DOMINIO-AQUI é um placeholder — ainda não há domínio de
+      produção definido (ver conversa: "ainda não tenho domínio próprio /
+      uso o da Vercel"). Assim que o deploy tiver uma URL final (domínio
+      próprio ou *.vercel.app), substituir em todas as tags abaixo, no
+      public/sitemap.xml e no public/robots.txt (linha do Sitemap:).
+    -->
+    <link rel="canonical" href="https://SEU-DOMINIO-AQUI.vercel.app/" />
+
+    <title>Pedro Castro — Sites que vendem</title>
+    <meta
+      name="description"
+      content="Pedro Castro — desenvolvedor full-stack. Sites e landing pages sob medida, com animação e performance de verdade."
+    />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Pedro Castro" />
+    <meta property="og:locale" content="pt_BR" />
+    <meta property="og:url" content="https://SEU-DOMINIO-AQUI.vercel.app/" />
+    <meta property="og:title" content="Pedro Castro — Sites que vendem" />
+    <meta
+      property="og:description"
+      content="Desenvolvedor full-stack. Sites e landing pages sob medida, com animação e performance de verdade."
+    />
+    <meta property="og:image" content="https://SEU-DOMINIO-AQUI.vercel.app/img/pedro-portrait.jpg" />
+    <meta property="og:image:width" content="896" />
+    <meta property="og:image:height" content="1204" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Pedro Castro — Sites que vendem" />
+    <meta
+      name="twitter:description"
+      content="Desenvolvedor full-stack. Sites e landing pages sob medida, com animação e performance de verdade."
+    />
+    <meta name="twitter:image" content="https://SEU-DOMINIO-AQUI.vercel.app/img/pedro-portrait.jpg" />
+
+    <!-- Dados estruturados (Person) — ajuda o Google a entender quem é o
+         dono do site e a exibir rich results (nome, foto, redes). -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "Pedro Castro",
+        "url": "https://SEU-DOMINIO-AQUI.vercel.app/",
+        "image": "https://SEU-DOMINIO-AQUI.vercel.app/img/pedro-portrait.jpg",
+        "jobTitle": "Desenvolvedor full-stack",
+        "description": "Sites e landing pages sob medida, com animação e performance de verdade.",
+        "worksFor": {
+          "@type": "Organization",
+          "name": "Vertigo Tecnologia"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

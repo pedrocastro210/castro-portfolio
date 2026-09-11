@@ -1,0 +1,136 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg: #0a0a0d;
+  --color-surface: #15151b;
+  --color-surface-2: #1c1c24;
+  --color-line: #27272f;
+  --color-ink: #f5f5f7;
+  --color-muted: #9a99a6;
+  --color-accent: #8b7cff;
+  --color-accent-2: #38d9ff;
+  --color-warm: #ff8a5c;
+  --color-hero-bg: #241a3d;
+
+  --font-display: "Fraunces", "Iowan Old Style", serif;
+  --font-sans: ui-sans-serif, system-ui, sans-serif;
+}
+
+@keyframes blob-breathe {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.55;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.18);
+    opacity: 0.85;
+  }
+}
+
+@keyframes blob-float {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(24px, -30px);
+  }
+}
+
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.94);
+    opacity: 0.6;
+  }
+  70%,
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+@layer base {
+  html {
+    background: var(--color-bg);
+    color-scheme: dark;
+  }
+
+  body {
+    margin: 0;
+    background: var(--color-bg);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    letter-spacing: -0.01em;
+  }
+
+  a {
+    color: inherit;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer utilities {
+  .demo-frame-wrap {
+    height: calc(100vh - var(--header-height) - var(--footer-height, 0px));
+    height: calc(100dvh - var(--header-height) - var(--footer-height, 0px));
+  }
+
+  .glow-blob {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    border-radius: 999px;
+    filter: blur(90px);
+    pointer-events: none;
+  }
+
+  .glow-blob-a {
+    width: 420px;
+    height: 420px;
+    background: color-mix(in oklab, var(--color-accent) 45%, transparent);
+    animation: blob-breathe 8s ease-in-out infinite;
+  }
+
+  .glow-blob-b {
+    width: 340px;
+    height: 340px;
+    background: color-mix(in oklab, var(--color-accent-2) 40%, transparent);
+    animation:
+      blob-breathe 10s ease-in-out infinite reverse,
+      blob-float 13s ease-in-out infinite;
+  }
+
+  .pulse-ring {
+    position: absolute;
+    inset: -6px;
+    border-radius: 0.375rem;
+    border: 1.5px solid var(--color-accent);
+    pointer-events: none;
+    animation: pulse-ring 2.6s ease-out infinite;
+  }
+
+  .text-gradient {
+    background: linear-gradient(90deg, var(--color-accent), var(--color-accent-2));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+}

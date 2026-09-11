@@ -1,0 +1,1830 @@
+/*
+  Estilos da home, escopados em `.oc-root` para não vazar tokens/estilos para
+  o resto do portfólio. Assets em public/core.
+*/
+
+.oc-root {
+  --oc-bg-0: #140e1b;
+  --oc-bg-1: #1c1320;
+  --oc-surface: hsl(270 25% 12%);
+  --oc-surface-2: hsl(270 22% 16%);
+  --oc-border: hsl(270 20% 22%);
+  --oc-fg: #ffffff;
+  --oc-fg-muted: rgba(255, 255, 255, 0.72);
+  --oc-fg-faint: rgba(255, 255, 255, 0.45);
+  --oc-primary: hsl(270 55% 65%);
+  --oc-primary-2: hsl(280 60% 72%);
+  --oc-mint: #34e2a0;
+  --oc-radius: 1rem;
+  --oc-font: "Instrument Sans", ui-sans-serif, system-ui, sans-serif;
+
+  position: relative;
+  font-family: var(--oc-font);
+  background: var(--oc-bg-0);
+  color: var(--oc-fg);
+  /* overflow-x: hidden pairing forces an implicit overflow-y: auto, which turns
+     .oc-root into a scroll container and breaks position:sticky for descendants
+     (Personas pinned stage). overflow-x: clip avoids the horizontal-scroll
+     sidecar without creating a scroll container. */
+  overflow-x: clip;
+  isolation: isolate;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.oc-root[data-oc-theme="light"] {
+  --oc-bg-0: #fffdfb;
+  --oc-bg-1: #faf7fc;
+  --oc-surface: #ffffff;
+  --oc-surface-2: hsl(270 20% 95%);
+  --oc-border: hsl(270 20% 90%);
+  --oc-fg: hsl(0 0% 16%);
+  --oc-fg-muted: hsl(0 0% 16% / 72%);
+  --oc-fg-faint: hsl(0 0% 16% / 45%);
+  --oc-primary: hsl(270 60% 55%);
+  --oc-primary-2: hsl(280 55% 60%);
+}
+
+/* Par de assets dark/light pra elementos que não são <img> (ex.: camada de
+   fundo do hero/footer, ver PhoneShowcase.tsx). */
+.oc-bg-theme-light {
+  display: none;
+}
+
+.oc-root[data-oc-theme="light"] .oc-bg-theme-dark {
+  display: none;
+}
+
+.oc-root[data-oc-theme="light"] .oc-bg-theme-light {
+  display: block;
+}
+
+.oc-root * {
+  box-sizing: border-box;
+}
+
+.oc-root h1,
+.oc-root h2,
+.oc-root h3 {
+  font-family: var(--oc-font);
+  letter-spacing: normal;
+}
+
+/* ---------- Nav ---------- */
+/* fixed + oculta no topo (opacity/translateY), revelada só após rolar — igual ao
+   original: nav não reserva espaço no fluxo, o hero ocupa a viewport inteira.
+   z-index ABAIXO da Hero (6, ver .oc-hero) de propósito: enquanto o fundo
+   roxo ainda cobre o topo da tela, ele pinta por cima do nav (mesmo que
+   navVisible já seja true) — o header só aparece de verdade quando o roxo
+   já fechou/sumiu dali, nunca sobreposto a ele. */
+.oc-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.1rem clamp(1.25rem, 4vw, 3rem);
+  background: transparent;
+  border-bottom: 1px solid transparent;
+  opacity: 0;
+  transform: translateY(-100%);
+  transition: opacity 0.4s ease, transform 0.4s ease, background-color 0.4s ease;
+}
+
+.oc-nav.oc-nav--visible {
+  opacity: 1;
+  transform: translateY(0);
+  background: color-mix(in oklab, var(--oc-bg-0) 80%, transparent);
+  backdrop-filter: blur(20px);
+}
+
+.oc-nav-links {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  font-size: 0.9rem;
+  color: var(--oc-fg-muted);
+}
+
+.oc-nav-links a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.oc-nav-links a:hover,
+.oc-theme-toggle:hover {
+  color: var(--oc-fg);
+}
+
+.oc-nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.oc-theme-toggle,
+.oc-nav-burger {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--oc-border);
+  background: var(--oc-surface);
+  color: var(--oc-fg-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.oc-nav-burger {
+  display: none;
+}
+
+.oc-nav-burger svg {
+  width: 18px;
+  height: 18px;
+}
+
+.oc-nav-mobile {
+  display: none;
+}
+
+@media (max-width: 720px) {
+  .oc-nav-links {
+    display: none;
+  }
+
+  .oc-nav-burger {
+    display: flex;
+  }
+
+  /* Some junto com o resto do nav até o header ficar visível (ver
+     .oc-nav--visible) — sem isso o menu abriria "flutuando" sobre o hero
+     antes do fundo roxo já ter saído do topo (mesmo z-index issue do nav,
+     ver comentário acima em .oc-nav). */
+  .oc-nav-mobile {
+    position: fixed;
+    top: 100%;
+    left: 0;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 0.5rem clamp(1.25rem, 4vw, 3rem) 1.25rem;
+    gap: 0.9rem;
+    background: color-mix(in oklab, var(--oc-bg-0) 96%, transparent);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--oc-border);
+    font-size: 1rem;
+    color: var(--oc-fg-muted);
+    opacity: 0;
+    transform: translateY(-8px);
+    pointer-events: none;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+  }
+
+  .oc-nav--menu-open .oc-nav-mobile {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  .oc-nav-mobile a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .oc-nav-mobile a:hover {
+    color: var(--oc-fg);
+  }
+}
+
+/* ---------- Floating QR ---------- */
+.oc-qr {
+  position: fixed;
+  right: 1.5rem;
+  bottom: 1.5rem;
+  z-index: 40;
+  background: #fff;
+  color: #111;
+  border-radius: 1.1rem;
+  padding: 1rem 0.85rem 0.85rem;
+  width: 176px;
+  text-align: center;
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.45);
+}
+
+.oc-qr-pattern {
+  display: block;
+  width: 112px;
+  height: 112px;
+  margin: 0 auto 0.6rem;
+  border-radius: 0.75rem;
+  object-fit: cover;
+}
+
+.oc-qr p {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 400;
+}
+
+.oc-qr a {
+  color: inherit;
+  text-decoration: none;
+  display: block;
+}
+
+/* Verde da marca (fixo, não segue o tema — é a cor do próprio WhatsApp) +
+   ícone pequeno do lado do texto, discreto. */
+.oc-qr-cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  color: #25d366;
+  font-size: 0.9rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.oc-qr-cta-icon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+/* Estado inicial: só um ícone discreto, sem o cartão do QR aberto — evita
+   competir visualmente com o resto da página assim que ela carrega. Roxo
+   escuro fixo (não segue o tema) — o botão em si já é sempre branco. */
+.oc-qr--closed {
+  width: 56px;
+  height: 56px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #2a1b3d;
+}
+
+.oc-qr-closed-icon {
+  width: 22px;
+  height: 22px;
+}
+
+@media (max-width: 640px) {
+  .oc-qr {
+    display: none;
+  }
+}
+
+.oc-qr-close {
+  position: absolute;
+  top: 50%;
+  left: -14px;
+  transform: translateY(-50%);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid #e5e5e5;
+  background: #fff;
+  color: #111;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+/* ---------- Hero ---------- */
+/* O ScrollTrigger com pin:true (ver Hero.tsx) embrulha a .oc-hero num
+   div.pin-spacer GERADO PELO GSAP — um ANCESTRAL, não descendente, que copia
+   o z-index da section (6) mas mantém pointer-events:auto por padrão. Ele é
+   quem de fato intercepta o clique no nav por baixo (pointer-events:none na
+   .oc-hero, um filho, não afeta esse ancestral). Sem isso, mesmo com a
+   section desabilitada, o wrapper continuava bloqueando. */
+.oc-root .pin-spacer {
+  pointer-events: none;
+}
+
+.oc-hero {
+  position: relative;
+  z-index: 6;
+  height: 100vh;
+  min-height: 560px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  /* SEM overflow:hidden aqui de propósito: a figura ganha um pin próprio bem
+     mais longo que o da section (ver Hero.tsx) e continua position:fixed
+     depois que a section volta ao fluxo normal — um overflow:hidden neste
+     nível clipava a figura assim que a caixa (agora fora da tela) da section
+     deixava de cobrir a posição onde ela deveria aparecer. */
+  /* A section inteira ignora clique/hover — z-index acima do nav (5, ver
+     .oc-nav) de propósito pra pintar por cima dele enquanto o fundo roxo
+     ainda está lá, mas isso também bloqueava cliques nos links do nav
+     (mesmo semi-transparente, um elemento só some do hit-test com
+     pointer-events:none, opacity não basta). .oc-hero-content reabilita
+     pointer-events pra si (abaixo), então os botões de App Store/Google
+     Play continuam clicáveis normalmente. */
+  pointer-events: none;
+}
+
+/* Isolado da figura de propósito (ver Hero.tsx) — só este wrapper (canvas +
+   background-color de fallback) fica no fade curto da section; a figura tem
+   seu próprio pin, bem mais longo. overflow:hidden mora aqui agora, pra
+   conter o canvas durante o scale-down sem afetar a figura. */
+.oc-hero-backdrop {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background-color: var(--oc-bg-0);
+  z-index: 0;
+}
+
+/* Fundo real é um shader WebGL2 (ver HeroWebGLBackground.tsx) — o canvas
+   roda em resolução reduzida (CONFIG.resolution=.5) e escala via CSS,
+   dando o look suave/borrado característico. */
+.oc-hero-webgl-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+.oc-hero-content {
+  position: relative;
+  z-index: 5;
+  max-width: 56rem;
+  padding: 0 1.5rem;
+  /* margin-bottom (não transform!) empurra o bloco pra cima dentro da
+     centralização flex da .oc-hero — usar transform aqui colidiria com o
+     y:-40 que o GSAP já anima no fade de saída (ver Hero.tsx). Com a copy
+     nova (título de 3 linhas + parágrafo mais longo) o bloco cresceu o
+     bastante pra encostar/ficar atrás da figura (z-index mais alto,
+     ancorada em bottom:0) — esse respiro evita a sobreposição. */
+  margin-bottom: clamp(3rem, 12vh, 7rem);
+  /* reabilita pointer-events (a section pai ignora clique, ver .oc-hero) —
+     os links de App Store/Google Play precisam continuar clicáveis. */
+  pointer-events: auto;
+}
+
+.oc-hero h1 {
+  font-size: 2.25rem;
+  font-weight: 500;
+  line-height: 1;
+  margin: 0 0 1rem;
+}
+
+@media (min-width: 768px) {
+  .oc-hero h1 {
+    font-size: 3rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .oc-hero h1 {
+    font-size: 3.75rem;
+  }
+}
+
+.oc-hero p {
+  color: color-mix(in oklab, var(--oc-fg) 80%, transparent);
+  font-size: 1rem;
+  max-width: 36rem;
+  margin: 0 auto 2rem;
+  line-height: 1.4;
+}
+
+@media (min-width: 768px) {
+  .oc-hero p {
+    font-size: 1.125rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .oc-hero p {
+    font-size: 1.25rem;
+  }
+}
+
+.oc-store-row {
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+/* Badges de App Store/Google Play viraram CTA de verdade (texto, não
+   imagem) — não tem como "renomear" um PNG oficial de loja de app. Altura
+   ~44px pra bater com o peso visual que os badges tinham. */
+.oc-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 44px;
+  padding: 0 1.5rem;
+  border-radius: 999px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: transform 0.15s ease, background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.oc-cta-btn:hover {
+  transform: scale(1.05);
+}
+
+.oc-cta-btn:active {
+  transform: scale(0.95);
+}
+
+.oc-cta-btn--primary {
+  background: var(--oc-fg);
+  color: var(--oc-bg-0);
+}
+
+.oc-cta-btn--ghost {
+  background: transparent;
+  color: var(--oc-fg);
+  border: 1px solid var(--oc-border);
+}
+
+/* Elemento ÚNICO (não um por seção/beat) — ver Personas.tsx. position:fixed
+   real, decoupled de qualquer pin/sticky: a mesma foto fica no exato mesmo
+   pixel da Hero até o fim da Personas (só um fade final aí, ao trocar pra
+   Promise — nunca entre as personas). Isso elimina o bug de duas fotos
+   coexistindo em posições ligeiramente diferentes (uma vinda de um pin
+   fixed, outra de um sticky) que aparecia quando cada seção tinha sua
+   própria cópia. z-index acima da Hero (6) e da Personas (auto) — abaixo do
+   Nav (50). */
+.oc-figure-stage {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: clamp(200px, 26vw, 340px);
+  height: clamp(190px, 30vh, 300px);
+  z-index: 8;
+  pointer-events: none;
+  opacity: 1;
+}
+
+.oc-figure-stage img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: bottom;
+}
+
+/* ---------- Personas (pinned scrollytelling) ---------- */
+.oc-personas {
+  position: relative;
+  /* Site original usa end:"+=500%" no desktop (scrub:1.2) — bem mais scroll
+     "vazio" por beat do que os antigos 320vh, pra dar tempo do hold/drift. */
+  height: 450vh;
+}
+
+.oc-personas-stage {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  /* Chapado em --oc-bg-0 (mesma cor do fallback da Hero, .oc-hero-backdrop) —
+     era um gradiente com --oc-bg-1 no topo, uma cor levemente diferente que
+     criava uma costura visível bem no meio do cross-fade Hero→Personas. */
+  background: var(--oc-bg-0);
+}
+
+.oc-persona-beat {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 0 1.5rem clamp(160px, 26vh, 260px);
+}
+
+/* Visibilidade real é por elemento (autoAlpha via GSAP); estes defaults só
+   evitam um flash de conteúdo antes do useGSAP rodar. */
+.oc-persona-text,
+.oc-persona-card {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.oc-persona-text {
+  position: relative;
+  z-index: 2;
+}
+
+.oc-persona-beat h2 {
+  font-size: 2.25rem;
+  font-weight: 500;
+  line-height: 1.25;
+  margin: 0 0 0.9rem;
+  max-width: 44rem;
+}
+
+@media (min-width: 768px) {
+  .oc-persona-beat h2 {
+    font-size: 3rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .oc-persona-beat h2 {
+    font-size: 3.75rem;
+    line-height: 1;
+  }
+}
+
+.oc-persona-beat p {
+  color: var(--oc-fg-muted);
+  max-width: 34rem;
+  line-height: 1.6;
+  margin: 0 auto;
+}
+
+/* Wrapper só cuida do posicionamento (centralização vertical via %) — o tilt/
+   scale/entrada animada do GSAP fica isolado no `.oc-persona-card` interno,
+   pra não colidir com a translateY(-50%) em unidade percentual. */
+.oc-persona-side {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: clamp(150px, 15vw, 220px);
+  aspect-ratio: 3 / 4;
+}
+
+.oc-persona-card {
+  width: 100%;
+  height: 100%;
+  border-radius: 1.2rem;
+  overflow: hidden;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);
+  background: var(--oc-surface);
+  transform: rotate(var(--oc-tilt, 0deg));
+}
+
+.oc-persona-card img {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.oc-persona-side.icon .oc-persona-card {
+  padding: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.oc-persona-side.icon .oc-persona-card img {
+  width: 100%;
+  height: 100%;
+  border-radius: 22%;
+}
+
+/* Mockup (laptop/celular com print de projeto real "colado" na tela) — o
+   card aqui é 16:9 (a proporção real das fotos), não o 3:4 padrão dos outros
+   beats: assim a foto entra inteira, sem cortar as laterais. */
+.oc-persona-side.mockup {
+  width: clamp(220px, 24vw, 340px);
+  aspect-ratio: 16 / 9;
+}
+
+.oc-mockup-frame {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.oc-mockup-frame .oc-mockup-device {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* Corners (ver Personas.tsx) definem a área exata da "tela" na foto —
+   inclusive a leve perspectiva/inclinação do celular na mão, que uma
+   rotação simples não capturava direito. clip-path recorta a screenshot
+   pro quadrilátero certo em vez de um retângulo rotacionado aproximado. */
+.oc-mockup-frame .oc-mockup-screen {
+  position: absolute;
+  object-fit: cover;
+}
+
+.oc-persona-side.left {
+  left: clamp(0.5rem, 6vw, 8rem);
+  --oc-tilt: -6deg;
+}
+
+.oc-persona-side.right {
+  right: clamp(0.5rem, 6vw, 8rem);
+  --oc-tilt: 6deg;
+}
+
+/* Mobile: os cards (150-340px) e o texto centralizado (até 44rem) disputavam
+   a mesma faixa horizontal — o texto (z-index:2) sempre ganhava, deixando os
+   cards escondidos atrás dele. Aqui eles encolhem e colam nas bordas, e o
+   texto encolhe pra abrir espaço visível dos dois lados da foto. */
+@media (max-width: 640px) {
+  .oc-persona-side {
+    width: clamp(64px, 18vw, 88px);
+    /* Base usa top:50% (centro da viewport) — na foto (.oc-figure-stage,
+       ancorada embaixo) a cabeça fica bem mais baixo que isso, perto de 80%.
+       Sem isso os cards ficam "soltos" lá em cima, longe da foto. */
+    top: 79%;
+  }
+
+  .oc-persona-side.mockup {
+    width: clamp(104px, 28vw, 140px);
+  }
+
+  .oc-persona-side.left {
+    left: 1.5rem;
+  }
+
+  .oc-persona-side.right {
+    right: 1.5rem;
+  }
+
+  .oc-persona-beat h2 {
+    max-width: 14rem;
+  }
+
+  .oc-persona-beat p {
+    max-width: 13rem;
+  }
+
+  .oc-figure-stage {
+    width: clamp(148px, 36vw, 200px);
+    height: clamp(210px, 33vh, 320px);
+  }
+
+  /* Se ainda sobrar alguma sobreposição num título mais longo, o card fica
+     por cima em vez de sumir atrás do texto. */
+  .oc-persona-side {
+    z-index: 3;
+  }
+}
+
+/* ---------- Promise ---------- */
+.oc-promise {
+  position: relative;
+  padding: 8rem 1.5rem;
+  text-align: center;
+  background: var(--oc-bg-1);
+}
+
+.oc-promise-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  background: rgba(155, 127, 212, 0.15);
+  color: var(--oc-primary-2);
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-bottom: 2rem;
+}
+
+.oc-promise-lead {
+  max-width: 34rem;
+  margin: 0 auto 1rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.oc-promise-text {
+  max-width: 36rem;
+  margin: 0 auto;
+  font-size: 1rem;
+  line-height: 1.4;
+  color: color-mix(in oklab, var(--oc-fg) 80%, transparent);
+}
+
+@media (min-width: 768px) {
+  .oc-promise-lead {
+    font-size: 1.5rem;
+  }
+
+  .oc-promise-text {
+    font-size: 1.125rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .oc-promise-lead {
+    font-size: 1.75rem;
+  }
+
+  .oc-promise-text {
+    font-size: 1.25rem;
+  }
+}
+
+.oc-promise-word {
+  opacity: 0.15;
+  filter: blur(6px);
+}
+
+.oc-promise-items {
+  margin-top: 3rem;
+  display: flex;
+  justify-content: center;
+}
+
+.oc-promise-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 1rem;
+  font-weight: 400;
+}
+
+.oc-promise-item span.pill {
+  background: var(--oc-surface);
+  border: 1px solid var(--oc-border);
+  border-radius: 0.875rem;
+  padding: 0.5rem 1rem;
+  overflow: hidden;
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+@media (min-width: 768px) {
+  .oc-promise-item span.pill {
+    font-size: 1.5rem;
+  }
+}
+
+/* ---------- Features ---------- */
+.oc-features {
+  padding: 7rem 1.5rem 6rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.oc-section-heading {
+  text-align: center;
+  font-size: 2.25rem;
+  font-weight: 500;
+  max-width: 56rem;
+  margin: 0 auto 3.5rem;
+  line-height: 1.25;
+  opacity: 0;
+  transform: translateY(60px);
+}
+
+@media (min-width: 768px) {
+  .oc-section-heading {
+    font-size: 3rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .oc-section-heading {
+    font-size: 3.75rem;
+    line-height: 1;
+  }
+}
+
+.oc-features .oc-section-heading {
+  margin-bottom: 1.25rem;
+}
+
+.oc-features-subtext {
+  text-align: center;
+  max-width: 40rem;
+  margin: 0 auto 3.5rem;
+  color: var(--oc-fg-muted);
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  opacity: 0;
+  transform: translateY(40px);
+}
+
+.oc-bento {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+}
+
+@media (max-width: 880px) {
+  .oc-bento {
+    grid-template-columns: 1fr;
+  }
+}
+
+.oc-card {
+  background: var(--oc-surface);
+  border: 1px solid var(--oc-border);
+  border-radius: 1.25rem;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  transform: translateY(80px) scale(0.95);
+}
+
+.oc-card-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 0.75rem;
+  margin: 0 0 1rem;
+}
+
+.oc-card h3 {
+  font-size: 1.5rem;
+  font-weight: 500;
+  line-height: 1.35;
+  margin: 0.9rem 0 0.4rem;
+}
+
+.oc-card p {
+  color: var(--oc-fg-muted);
+  font-size: 1rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* ---------- AI insights (empilhado: texto centralizado, vídeo embaixo) ---------- */
+.oc-ai {
+  padding: 5rem 1.5rem;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.oc-ai-text {
+  text-align: center;
+  max-width: 640px;
+  margin: 0 auto 4rem;
+  opacity: 0;
+  transform: translateY(60px);
+}
+
+.oc-ai-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  background: rgba(155, 127, 212, 0.15);
+  color: var(--oc-primary-2);
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-bottom: 1.5rem;
+}
+
+.oc-ai h2 {
+  font-size: 2.25rem;
+  font-weight: 500;
+  margin: 0 0 1rem;
+  line-height: 1.25;
+}
+
+@media (min-width: 768px) {
+  .oc-ai h2 {
+    font-size: 3rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .oc-ai h2 {
+    font-size: 3.75rem;
+    line-height: 1;
+  }
+}
+
+.oc-ai p {
+  color: var(--oc-fg-muted);
+  line-height: 1.6;
+}
+
+.oc-ai-video-wrap {
+  display: flex;
+  justify-content: center;
+  padding: 0 1rem;
+  opacity: 0;
+  transform: translateY(80px) scale(0.95);
+}
+
+.oc-ai-video-frame {
+  position: relative;
+  width: 100%;
+  max-width: 40rem;
+  aspect-ratio: 1080 / 1160;
+  border-radius: 1.2rem;
+  border: 1px solid var(--oc-border);
+  background: var(--oc-surface);
+  overflow: hidden;
+}
+
+.oc-ai-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* Print do FisioFit por cima da tela do celular no vídeo original — posição
+   medida no frame (ver Personas/AIInsights), top/left marcam o CENTRO. */
+.oc-ai-video-screen {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  object-fit: fill;
+  border-radius: 1% 1% 8% 8%;
+}
+
+/* ---------- Pricing ---------- */
+.oc-pricing {
+  padding: 7rem 1.5rem;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.oc-pricing-head {
+  text-align: center;
+  max-width: 640px;
+  margin: 0 auto 3.5rem;
+}
+
+.oc-pricing-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  background: rgba(155, 127, 212, 0.15);
+  color: var(--oc-primary-2);
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-bottom: 1.5rem;
+}
+
+.oc-pricing-head h2 {
+  font-size: 2.25rem;
+  font-weight: 500;
+  margin: 0 0 1rem;
+  line-height: 1.25;
+}
+
+@media (min-width: 768px) {
+  .oc-pricing-head h2 {
+    font-size: 3rem;
+  }
+}
+
+.oc-pricing-head p {
+  color: var(--oc-fg-muted);
+  line-height: 1.6;
+}
+
+.oc-pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.25rem;
+  align-items: stretch;
+}
+
+@media (max-width: 980px) {
+  .oc-pricing-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 560px) {
+  .oc-pricing-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Altura fixa medida no conteúdo atual (o mais alto dos 4 cards, no grid de
+   4 colunas, dá ~319px) — o slot é quem participa do grid/flow; o card em si
+   é absoluto dentro dele (ver abaixo), então crescer no hover nunca reflowa
+   a seção, só "sai por cima" do que tiver embaixo. */
+.oc-pricing-slot {
+  position: relative;
+  min-height: 21rem;
+}
+
+.oc-pricing-card {
+  position: absolute;
+  inset: 0;
+  background: var(--oc-surface);
+  border: 1px solid var(--oc-border);
+  border-radius: 1.25rem;
+  padding: 1.75rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  z-index: 1;
+  /* Mesma curva usada no resto do site (ver WORD_TRANSITION em Promise.tsx) —
+     um "ease" genérico do navegador destoava do restante das animações,
+     ficando com a entrada/saída mais brusca que o resto da página. */
+  transition: border-color 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    box-shadow 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  will-change: transform;
+}
+
+.oc-pricing-card:hover,
+.oc-pricing-card:focus-within {
+  /* Solta o "bottom:0" do inset — a altura vira automática (a do próprio
+     conteúdo, agora com a lista de detalhes) e o card cresce pra baixo por
+     cima do que tiver depois dele, em vez de esticar o slot e empurrar o
+     resto da seção. z-index sobe pra ficar por cima da nota/FAQ que agora
+     ele sobrepõe. */
+  bottom: auto;
+  z-index: 20;
+  border-color: color-mix(in oklab, var(--oc-primary) 60%, var(--oc-border));
+  box-shadow: 0 24px 48px -12px rgba(0, 0, 0, 0.25);
+}
+
+.oc-pricing-card--recommended {
+  border-color: var(--oc-primary);
+  box-shadow: 0 0 0 1px var(--oc-primary);
+}
+
+.oc-pricing-card--recommended:hover {
+  border-color: var(--oc-primary);
+  box-shadow: 0 0 0 1px var(--oc-primary), 0 24px 48px -12px rgba(0, 0, 0, 0.25);
+}
+
+/* Brilho que segue o cursor (--mx/--my setados via JS no pointermove) — fica
+   num filho próprio com overflow:hidden, não no card inteiro, pra não cortar
+   a tag "Recomendado" que sai propositalmente fora da borda superior. */
+.oc-pricing-card-glow {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.oc-pricing-card-glow::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(280px circle at var(--mx, 50%) var(--my, 50%), rgba(155, 127, 212, 0.22), transparent 60%);
+  opacity: 0;
+  transition: opacity 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.oc-pricing-card:hover .oc-pricing-card-glow::before {
+  opacity: 1;
+}
+
+.oc-pricing-tag {
+  position: absolute;
+  top: -0.7rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--oc-primary);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.3rem 0.8rem;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.oc-pricing-card h3 {
+  font-size: 1.1rem;
+  font-weight: 500;
+  margin: 0.5rem 0 1rem;
+}
+
+.oc-pricing-price {
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.oc-pricing-period {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--oc-fg-muted);
+  margin-left: 0.25rem;
+}
+
+.oc-pricing-term {
+  font-size: 0.85rem;
+  color: var(--oc-fg-muted);
+  margin: 0.5rem 0 1rem;
+}
+
+.oc-pricing-desc {
+  color: var(--oc-fg-muted);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin: 0 0 1rem;
+}
+
+/* Truque do grid-template-rows 0fr→1fr: anima até a altura natural do
+   conteúdo sem precisar medir nada em JS (display:grid soletra "auto" como
+   uma fração — 0fr colapsa, 1fr expande pro tamanho do próprio conteúdo). */
+.oc-pricing-details {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.oc-pricing-card:hover .oc-pricing-details,
+.oc-pricing-card:focus-within .oc-pricing-details {
+  grid-template-rows: 1fr;
+}
+
+.oc-pricing-details-inner {
+  overflow: hidden;
+}
+
+.oc-pricing-detail-list {
+  list-style: none;
+  margin: 0;
+  padding: 0.9rem 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  opacity: 0;
+  transition: opacity 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.oc-pricing-card:hover .oc-pricing-detail-list,
+.oc-pricing-card:focus-within .oc-pricing-detail-list {
+  opacity: 1;
+  transition: opacity 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.1s;
+}
+
+.oc-pricing-detail-list li {
+  font-size: 0.82rem;
+  color: var(--oc-fg-muted);
+  display: flex;
+  align-items: flex-start;
+  gap: 0.45rem;
+}
+
+.oc-pricing-detail-list li::before {
+  content: "✓";
+  color: var(--oc-primary);
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.oc-pricing-card .oc-cta-btn {
+  width: 100%;
+  margin-top: auto;
+}
+
+/* Em repouso, margin-top:auto usa a sobra do slot (altura fixa) pra encostar
+   o botão embaixo. Expandido, o card vira altura automática — não sobra
+   espaço nenhum pro auto empurrar, e o botão ficava colado na lista de
+   detalhes. Troca por uma margem fixa só nesse estado. */
+.oc-pricing-card:hover .oc-cta-btn,
+.oc-pricing-card:focus-within .oc-cta-btn {
+  margin-top: 1.75rem;
+}
+
+/* Mobile: o :hover "gruda" no toque (o navegador só solta ao tocar em outro
+   elemento) — com o card crescendo por cima do de baixo (position:absolute +
+   z-index, ver comentário acima), isso empilhava cards de forma bagunçada
+   assim que o usuário tocava em mais de um. Aqui o card já nasce expandido,
+   no fluxo normal do documento: sem hover, sem crescer por cima de nada. */
+@media (max-width: 560px) {
+  .oc-pricing-slot {
+    min-height: 0;
+  }
+
+  .oc-pricing-card {
+    position: relative;
+    inset: auto;
+  }
+
+  .oc-pricing-details {
+    grid-template-rows: 1fr;
+  }
+
+  .oc-pricing-detail-list {
+    opacity: 1;
+  }
+
+  .oc-pricing-card .oc-cta-btn {
+    margin-top: 1.75rem;
+  }
+}
+
+.oc-pricing-note {
+  text-align: center;
+  color: var(--oc-fg-muted);
+  font-size: 0.85rem;
+  margin: 2rem 0 0;
+}
+
+/* ---------- FAQ ---------- */
+.oc-faq {
+  padding: 6rem 1.5rem;
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+/* Cores reais extraídas do bundle (Radix AccordionItem, bg-[#f0f0f0]
+   dark:bg-[#1a1b1e], data-[state=open]:bg-[#e8e8e8] dark:...:bg-[#25262b]). */
+.oc-root {
+  --oc-faq-bg: #1a1b1e;
+  --oc-faq-bg-open: #25262b;
+}
+
+.oc-root[data-oc-theme="light"] {
+  --oc-faq-bg: #f0f0f0;
+  --oc-faq-bg-open: #e8e8e8;
+}
+
+.oc-faq-item {
+  border-radius: 0.75rem;
+  background: var(--oc-faq-bg);
+  transition: background-color 0.3s ease;
+  margin-bottom: 0.75rem;
+}
+
+.oc-faq-item[data-open="true"] {
+  background: var(--oc-faq-bg-open);
+}
+
+.oc-faq-trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  background: none;
+  border: none;
+  color: var(--oc-fg);
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 500;
+  text-align: left;
+  padding: 1.25rem 1.5rem;
+  cursor: pointer;
+}
+
+@media (min-width: 768px) {
+  .oc-faq-trigger {
+    font-size: 1.125rem;
+  }
+}
+
+.oc-faq-chevron {
+  flex-shrink: 0;
+  transition: transform 0.3s ease;
+}
+
+.oc-faq-item[data-open="true"] .oc-faq-chevron {
+  transform: rotate(180deg);
+}
+
+.oc-faq-panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.35s ease;
+}
+
+.oc-faq-item[data-open="true"] .oc-faq-panel {
+  grid-template-rows: 1fr;
+}
+
+.oc-faq-panel-inner {
+  overflow: hidden;
+  padding: 0 1.5rem;
+}
+
+.oc-faq-panel p {
+  margin: 0 0 1.25rem;
+  color: var(--oc-fg-muted);
+  font-size: 1rem;
+  line-height: 1.6;
+  white-space: pre-line;
+}
+
+.oc-faq-more {
+  display: inline-block;
+  margin-top: 1.5rem;
+  color: var(--oc-primary-2);
+  text-decoration: underline;
+  font-size: 0.9rem;
+  opacity: 0;
+  transform: translateY(80px);
+}
+
+[data-faq-item] {
+  opacity: 0;
+  transform: translateY(80px) scale(0.95);
+}
+
+/* ---------- Highlights (cards explodem ao redor do ícone e colapsam) ---------- */
+/* Compacto de propósito: a meta é a seção inteira (texto + coreografia)
+   caber numa tela só, sem precisar rolar dentro dela. */
+.oc-highlights {
+  position: relative;
+  overflow: visible;
+  padding: 3rem 1.5rem 2.5rem;
+}
+
+.oc-highlights-head {
+  text-align: center;
+  max-width: 640px;
+  margin: 0 auto 2rem;
+}
+
+.oc-highlights-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  background: rgba(155, 127, 212, 0.15);
+  color: var(--oc-primary-2);
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-bottom: 1.5rem;
+}
+
+.oc-highlights-head h2 {
+  font-size: 2.25rem;
+  font-weight: 500;
+  margin: 0 0 1rem;
+  line-height: 1.25;
+}
+
+@media (min-width: 768px) {
+  .oc-highlights-head h2 {
+    font-size: 3rem;
+  }
+}
+
+.oc-highlights-head p {
+  color: var(--oc-fg-muted);
+  line-height: 1.6;
+}
+
+.oc-highlights-stage {
+  position: relative;
+  width: 100%;
+  max-width: 80rem;
+  margin: 0 auto;
+  min-height: 460px;
+}
+
+/* Slot só centraliza (translate em %); o GSAP anima só o `-card`/`-icon`
+   interno, que nasce em transform:none pra não colidir com o -50%/-50%. */
+.oc-highlight-slot,
+.oc-highlights-icon-slot {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* Logos por cima do retrato (não atrás) — o slot deles entra depois do
+   ícone no fluxo/z-index. pointer-events:none é essencial aqui: mesmo
+   invisível em repouso, o slot fica centralizado exatamente sobre o retrato
+   e, sendo mais alto em z-index, bloquearia o clique de replay nele. */
+.oc-highlight-slot {
+  z-index: 10;
+  pointer-events: none;
+}
+
+/* Fundo escuro fixo (não segue o tema): as logos foram recoloridas num
+   cinza-claro sólido (~#e0e0e0) pra ficarem discretas, o que precisa de um
+   fundo escuro pra ter contraste — em fundo branco elas quase somem. */
+.oc-highlight-card {
+  width: clamp(92px, 9.5vw, 130px);
+  aspect-ratio: 4 / 3;
+  border-radius: 0.85rem;
+  overflow: hidden;
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  background: #180f24;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.oc-highlight-card img {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+}
+
+.oc-highlights-icon-slot {
+  z-index: 1;
+}
+
+/* ---------- Testimonials (/projetos) ---------- */
+.oc-testimonials {
+  padding: 3rem 1.5rem 5rem;
+  max-width: 88rem;
+  margin: 0 auto;
+}
+
+/* Flex, não grid: com grid, uma linha final incompleta (o 5º card sozinho)
+   fica encostada à esquerda, porque todas as linhas herdam as mesmas
+   colunas da primeira. Com flex-wrap, cada linha é independente e
+   justify-content:center centraliza tanto os 5 numa linha só (telas
+   largas) quanto o resto sozinho numa segunda linha (telas médias). */
+.oc-testimonials-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.25rem;
+}
+
+.oc-testimonials-grid > * {
+  flex: 1 1 220px;
+  max-width: 280px;
+}
+
+/* Só layout/tipografia aqui — a casca visual (fundo/borda/sombra/brilho) é
+   o BorderGlow por fora (ver TestimonialsGlow.tsx). Cor de fundo do
+   BorderGlow é escura fixa (não segue o tema claro/escuro da página, mesma
+   lógica de .oc-highlight-card), por isso o texto abaixo é fixo claro em
+   vez de usar os tokens --oc-fg/--oc-fg-muted (que mudam com o tema). */
+.oc-testimonial-card {
+  position: relative;
+  margin: 0;
+  padding: 2rem 1.75rem 1.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  opacity: 0;
+}
+
+.oc-testimonial-mark {
+  position: relative;
+  font-family: var(--font-display, Georgia, serif);
+  font-size: 3.5rem;
+  line-height: 1;
+  height: 1.75rem;
+  color: var(--oc-primary-2);
+  opacity: 0.55;
+}
+
+.oc-testimonial-card blockquote {
+  position: relative;
+  margin: 0;
+  color: #f5f5f7;
+  font-size: 1.02rem;
+  line-height: 1.6;
+}
+
+.oc-testimonial-card figcaption {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  margin-top: auto;
+  padding-top: 1.25rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.oc-testimonial-avatar {
+  flex: 0 0 auto;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(135deg, var(--oc-primary), var(--oc-primary-2));
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--oc-primary-2) 25%, transparent);
+}
+
+.oc-testimonial-who {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.oc-testimonial-name {
+  font-weight: 600;
+  font-size: 0.92rem;
+  color: #f5f5f7;
+}
+
+.oc-testimonial-role {
+  color: rgba(245, 245, 247, 0.65);
+  font-size: 0.8rem;
+}
+
+/* Clicável pra repetir a coreografia depois que os cards somem (ver
+   playSequence em Highlights.tsx). */
+.oc-highlights-portrait {
+  width: clamp(150px, 15vw, 240px);
+  aspect-ratio: 3 / 4;
+  border-radius: 1.25rem;
+  overflow: hidden;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.45);
+  cursor: pointer;
+}
+
+.oc-highlights-portrait img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ---------- PhoneShowcase CTA (texto sobreposto: atrás do header (z-index 5)
+   e do astronauta (z-index 20) em repouso; no hover/focus do botão, sobe
+   pra --front e passa na frente do astronauta — ver PhoneShowcase.tsx). ---------- */
+.oc-phone-cta {
+  position: absolute;
+  inset-inline: 0;
+  top: 5%;
+  z-index: 3;
+  max-width: 38rem;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  text-align: center;
+}
+
+.oc-phone-cta--front {
+  z-index: 21;
+}
+
+.oc-phone-cta h2 {
+  font-size: 1.75rem;
+  font-weight: 500;
+  line-height: 1.25;
+  margin: 0 0 1rem;
+}
+
+@media (min-width: 768px) {
+  .oc-phone-cta h2 {
+    font-size: 2.25rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .oc-phone-cta h2 {
+    font-size: 2.75rem;
+    line-height: 1.1;
+  }
+}
+
+.oc-phone-cta p {
+  color: var(--oc-fg-muted);
+  font-size: 1rem;
+  line-height: 1.5;
+  max-width: 30rem;
+  margin: 0 auto 1.5rem;
+}
+
+/* ---------- PhoneShowcase (fundo + astronauta, tela cheia) ---------- */
+.oc-phone-showcase {
+  position: relative;
+  height: 100vh;
+  min-height: 560px;
+  overflow: hidden;
+}
+
+.oc-phone-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: top center;
+  background-repeat: no-repeat;
+}
+
+.oc-phone-astronaut {
+  position: absolute;
+  inset-inline: 0;
+  bottom: -2px;
+  z-index: 20;
+  height: 70%;
+  background-size: cover;
+  background-position: bottom center;
+  background-repeat: no-repeat;
+  pointer-events: none;
+}
+
+/* ---------- Laptop showcase (vídeo scrubado pelo scroll) ---------- */
+/* Mesmo padrão do FisioFit (Movement/Apparatus): section alta com um stage
+   sticky; a reprodução é sincronizada ao scroll (ver LaptopShowcase.tsx) em
+   vez de autoplay/loop. Sem moldura/texto — o vídeo cobre a viewport
+   inteira, tipo tela cheia. */
+.oc-laptop {
+  position: relative;
+  height: 260vh;
+  background: #000;
+}
+
+.oc-laptop-stage {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.oc-laptop-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  /* canvas, não <video> — sem object-fit aqui; o "cover" é calculado à mão
+     no drawImage (ver LaptopShowcase.tsx). display:block tira o espaço de
+     inline-baseline que <canvas> tem por padrão. */
+  display: block;
+}
+
+/* ---------- Footer ---------- */
+/* Cores reais extraídas do bundle (footer bg-[#f5f5f5] dark:bg-[#0c0d0f],
+   ícones bg-[#e0e0e0] dark:bg-[#272727]). */
+.oc-root {
+  --oc-footer-bg: #0c0d0f;
+  --oc-footer-icon-bg: #272727;
+}
+
+.oc-root[data-oc-theme="light"] {
+  --oc-footer-bg: #f5f5f5;
+  --oc-footer-icon-bg: #e0e0e0;
+}
+
+.oc-footer {
+  padding: 4rem 1.5rem 5rem;
+  background: var(--oc-footer-bg);
+}
+
+.oc-footer-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  opacity: 0;
+  transform: translateY(40px);
+}
+
+.oc-footer-top {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+.oc-footer-label {
+  margin: 0 0 1rem;
+  color: var(--oc-fg-muted);
+  font-size: 0.95rem;
+}
+
+.oc-footer-social {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.oc-footer-social a {
+  width: 48px;
+  height: 48px;
+  border-radius: 0.75rem;
+  background: var(--oc-footer-icon-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--oc-fg);
+  text-decoration: none;
+  overflow: hidden;
+  transition: transform 0.2s ease;
+}
+
+.oc-footer-social a:hover {
+  transform: scale(1.1);
+}
+
+.oc-social-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.oc-footer-divider {
+  border-top: 1px solid var(--oc-border);
+  margin: 0 0 2rem;
+}
+
+.oc-footer-bottom {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
+.oc-footer-wordmark {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.oc-footer-copy {
+  margin: 0;
+  color: var(--oc-fg-faint);
+  font-size: 0.85rem;
+}
+
+/* ---------- ProjectsPage (/projetos) ---------- */
+/* 72rem (era 56rem) de propósito: o MaskedHeading calcula o font-size a
+   partir da LARGURA do próprio elemento (prop textScale, ver
+   MaskedHeading.tsx/ProjectsPage.tsx) — um container mais largo aqui vira
+   letras maiores, ou seja, mais área de vídeo aparecendo por dentro de cada
+   uma. O parágrafo dentro mantém o próprio max-width (34rem), então não
+   alarga junto. */
+.oc-projects-hero {
+  padding: 6.5rem 1.5rem 4rem;
+  max-width: 72rem;
+  margin: 0 auto;
+}
+
+.oc-projects-head {
+  text-align: center;
+}
+
+/* Tamanho real é calculado em JS pelo próprio MaskedHeading (prop textScale,
+   ver MaskedHeading.tsx) a partir da largura do elemento — este font-size é
+   só o valor de 1º paint, antes do useEffect rodar (evita flash com a
+   tipografia padrão do browser). */
+.oc-projects-head .masked-heading {
+  font-size: 3.25rem;
+  margin: 0 0 1.25rem;
+  overflow: hidden;
+}
+
+.oc-projects-head p {
+  color: var(--oc-fg-muted);
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  max-width: 34rem;
+  margin: 0 auto;
+}
+
+.oc-projects-grid-section {
+  padding: 3rem 1.5rem 6rem;
+  max-width: 76rem;
+  margin: 0 auto;
+}
+
+.oc-projects-gallery {
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+/* Abaixo de 520px o próprio CSS do AccordionGallery (vendor, ver
+   AccordionGallery.css) força `height: auto !important` no container —
+   sem uma altura fixa pra distribuir, o flexGrow que faz o painel ativo
+   "crescer" não tem efeito nenhum (todos ficam do mesmo tamanho, achatados
+   em ~84px). Não precisa repetir a media query aqui: só passamos
+   orientation="vertical" quando já estamos no mobile (ver ProjectsPage.tsx),
+   então basta um seletor mais específico (duas classes) pra vencer o
+   `!important` do vendor em qualquer largura — valor fixo, independente da
+   prop `height` (o componente remede a altura real via
+   getBoundingClientRect de qualquer forma). Restaura o efeito de
+   expandir/recolher no toque.
+
+   540px (era 380px): com min-height:56px por painel (ver AccordionGallery.css)
+   e 5 projetos, o piso sozinho já soma 5×56 + 4 gaps×10 = 320px — 380px só
+   deixava 60px de sobra pra distribuir via flexGrow entre os 5 painéis, ou
+   seja, o ativo mal crescia (~12px a mais que os outros) e na prática todo
+   mundo colapsava pro piso, sem expandir e sem dar pra ver o preview. Com
+   540px sobram ~220px de espaço livre, e o ativo (peso 12 dos 16 totais,
+   ver applyLayout em AccordionGallery.jsx) fica com ~220px de altura —
+   painel colapsado ~70px (mostra o título), ativo ~220px (mostra o
+   preview). */
+.oc-projects-gallery .accordion-gallery--vertical {
+  height: 540px !important;
+}
+
+
+@media (prefers-reduced-motion: reduce) {
+  .oc-root * {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}

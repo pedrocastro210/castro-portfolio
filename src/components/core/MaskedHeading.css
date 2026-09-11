@@ -1,0 +1,105 @@
+.masked-heading {
+  position: relative;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  text-wrap: balance;
+  -webkit-font-smoothing: antialiased;
+}
+
+.masked-heading__measure {
+  color: transparent;
+}
+
+.masked-heading__word {
+  display: inline-block;
+  white-space: pre;
+}
+
+.masked-heading__word:not(:last-child)::after {
+  content: ' ';
+}
+
+.masked-heading__baseline {
+  display: inline-block;
+  width: 0;
+  height: 0;
+}
+
+.masked-heading__defs {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+.masked-heading__reveal {
+  position: absolute;
+  inset: 0;
+  display: block;
+  pointer-events: none;
+}
+
+/* Corte de caixa comum (overflow:hidden), não clip-path — evita a costura de
+   GPU que um clip-path animado causaria em telas com DPR fracionário (ver
+   comentário no reveal "wipe" em MaskedHeading.tsx). width começa/anima
+   entre 0% e 100% pra revelar a máscara das letras aos poucos. */
+.masked-heading__wipe-mask {
+  position: absolute;
+  inset: 0;
+  display: block;
+  overflow: hidden;
+}
+
+.masked-heading__clip {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  display: block;
+  /* width em px, setada via JS (sync() em MaskedHeading.tsx) — precisa ficar
+     no tamanho total sempre, mesmo com .masked-heading__wipe-mask (acima)
+     mais estreito durante o wipe; um valor em % encolheria junto. */
+}
+
+/* overflow:hidden aqui é o que de fato contém o vídeo ampliado (fillScale) —
+   o transform/scale vai no .masked-heading__source (ver place() em
+   MaskedHeading.tsx), não neste elemento, que fica sempre do tamanho exato
+   do clip-path das letras. Antes o scale ficava aqui e o vídeo, maior que a
+   máscara, dependia só do clip-path SVG pra ser contido — uma fatia dele
+   escapava perto da última linha do título (bug de rasterização de
+   clip-path com filho maior/transformado, não é conteúdo do vídeo). */
+.masked-heading__media {
+  position: absolute;
+  inset: 0;
+  display: block;
+  overflow: hidden;
+  /* Fundo do poster (background-image setado via JSX quando mediaType é
+     "video") — cobre o vídeo com uma imagem estática limpa até ele
+     realmente começar a tocar (ver .masked-heading__source--video abaixo e
+     o efeito de fade em MaskedHeading.tsx). */
+  background-size: cover;
+  background-position: center;
+}
+
+.masked-heading__source {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+  user-select: none;
+  -webkit-user-drag: none;
+  will-change: transform;
+}
+
+/* Nasce invisível (opacity via classe, não via JSX style — setar direto no
+   JSX faria o React resetar a opacity pra 0 em qualquer re-render do
+   componente, desfazendo o fade). Some do poster por baixo (ver
+   .masked-heading__media) só quando currentTime realmente avança — nunca
+   mostra o frame "pronto mas parado" que rasteriza como uma linha por
+   baixo do texto. */
+.masked-heading__source--video {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
