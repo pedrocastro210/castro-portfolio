@@ -2,34 +2,6 @@
 const BASE = "/core"
 
 export const ASSET = {
-  logoDark: `${BASE}/img/logo-dark.svg`,
-  logoLight: `${BASE}/img/logo-light.svg`,
-  footerLogoDark: `${BASE}/img/footer-logo-dark.svg`,
-  footerLogoLight: `${BASE}/img/footer-logo-light.svg`,
-  qr: `${BASE}/img/qr.png`,
-  appIconLight: `${BASE}/img/icon_light.png`,
-  appIconDark: `${BASE}/img/icon_dark.png`,
-  cardCategoryLight: `${BASE}/img/category.png`,
-  cardCategoryDark: `${BASE}/img/category_dark.png`,
-  cardTotalSpentLight: `${BASE}/img/totalspent.png`,
-  cardTotalSpentDark: `${BASE}/img/totalspent_dark.png`,
-  cardTrendLight: `${BASE}/img/trend.png`,
-  cardTrendDark: `${BASE}/img/trend_dark.png`,
-  cardEmotionLight: `${BASE}/img/emotion.png`,
-  cardEmotionDark: `${BASE}/img/emotion_dark.png`,
-  cardNewsLight: `${BASE}/img/news.png`,
-  cardNewsDark: `${BASE}/img/news_dark.png`,
-  cardTodayLight: `${BASE}/img/today.png`,
-  cardTodayDark: `${BASE}/img/today_dark.png`,
-  downloadDark: `${BASE}/img/download_dark.webp`,
-  downloadLight: `${BASE}/img/download_light.webp`,
-  play: `${BASE}/img/play.webp`,
-  heroBgDark: `${BASE}/img/hero-bg-dark.webp`,
-  heroBgLight: `${BASE}/img/hero-bg-light.webp`,
-  heroLadyDark: `${BASE}/img/hero-lady-dark.webp`,
-  heroLadyLight: `${BASE}/img/hero-lady-light.webp`,
-  dreamChaser: `${BASE}/img/dream-chaser-light.png`,
-  sub: `${BASE}/img/sub-light.webp`,
   gallery1: `${BASE}/img/gallery-1.png`,
   gallery2: `${BASE}/img/gallery-2.png`,
   // Fotos de stock (Unsplash, licença livre p/ uso comercial, sem atribuição
@@ -43,7 +15,6 @@ export const ASSET = {
   // de projetos do Pedro em vez de logo/marca de terceiro.
   deviceLaptopBlank: `${BASE}/img/laptop-mockup-blank.jpg`,
   devicePhoneBlank: `${BASE}/img/phone-mockup-blank.jpg`,
-  footeriphone: `${BASE}/img/footeriphone.png`,
   bgFooterDark: `${BASE}/img/bg_footer_dark.jpg`,
   bgFooterLight: `${BASE}/img/bg_footer_light.jpg`,
   bgFooterFront: `${BASE}/img/bg_footer_front.webp`,
@@ -53,7 +24,6 @@ export const ASSET = {
   // e o retângulo em AIInsights.tsx).
   aiInsightsVideo: `${BASE}/video/ai_light.mp4`,
   aiInsightsScreen: `${BASE}/video/showcase-dentalcare.webm`,
-  tapToPayVideo: `${BASE}/video/shortcut-vid.mp4`,
   // Assets do Pedro (fora do BASE da home — vivem em public/ do próprio
   // castro-portfolio, não em public/core).
   perfil: "/img/perfil.png",
