@@ -1,3 +1,4 @@
+import { useEffect } from "react"
 import { Link } from "react-router-dom"
 import { PROJECTS, type Project } from "../data/projects"
 import { whatsappUrl } from "./core/assets"
@@ -13,6 +14,28 @@ export function DemoFrame({ project }: DemoFrameProps) {
   const { title, demoPath, slug } = project
   const otherProjects = PROJECTS.filter((p) => p.slug !== slug)
   const talkUrl = whatsappUrl(`Olá! Vi o projeto ${title} no seu portfólio e quero conversar sobre algo parecido.`)
+
+  // O wrapper abaixo é position:fixed, mas sem isso o documento por trás
+  // continua "rolável" (mesmo com 0px de conteúdo) — no Safari/iOS isso
+  // engatilha o bounce elástico da página externa a partir de um gesto de
+  // arrastar dentro do iframe, e um elemento fixed nessa hora "se solta" e
+  // segue o dedo, dando a sensação de arrastar o preview inteiro em vez de
+  // rolar dentro dele como numa página normal.
+  useEffect(() => {
+    const { style: html } = document.documentElement
+    const { style: body } = document.body
+    const prevHtmlOverflow = html.overflow
+    const prevBodyOverflow = body.overflow
+    const prevBodyOverscroll = body.overscrollBehavior
+    html.overflow = "hidden"
+    body.overflow = "hidden"
+    body.overscrollBehavior = "none"
+    return () => {
+      html.overflow = prevHtmlOverflow
+      body.overflow = prevBodyOverflow
+      body.overscrollBehavior = prevBodyOverscroll
+    }
+  }, [])
 
   return (
     <div className="fixed inset-0 flex flex-col bg-bg">

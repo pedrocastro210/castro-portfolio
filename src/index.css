@@ -91,6 +91,7 @@
   .demo-frame-wrap {
     height: calc(100vh - var(--header-height) - var(--footer-height, 0px));
     height: calc(100dvh - var(--header-height) - var(--footer-height, 0px));
+    overscroll-behavior: none;
   }
 
   .glow-blob {
