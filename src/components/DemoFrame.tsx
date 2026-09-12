@@ -49,13 +49,7 @@ export function DemoFrame({ project }: DemoFrameProps) {
         <span className="text-sm font-medium">{title}</span>
       </header>
 
-      <div
-        className="demo-frame-wrap relative w-full"
-        style={{
-          ["--header-height" as string]: `${HEADER_HEIGHT}px`,
-          ["--footer-height" as string]: `${FOOTER_HEIGHT}px`,
-        }}
-      >
+      <div className="demo-frame-wrap relative w-full">
         <iframe
           src={demoPath}
           title={`${title} — demo`}
