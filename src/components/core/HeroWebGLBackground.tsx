@@ -416,6 +416,17 @@ export function HeroWebGLBackground({ darkMode }: Props) {
     }
     window.addEventListener("scroll", onScroll, { passive: true, capture: true })
 
+    // O Hero fica pinado e depois encolhe (ver core/Hero.tsx), mas o canvas
+    // continua no DOM — sem isso os 6 passes (fill/vignette/sine/voronoi/
+    // bokeh/output, com 40 iterações no bokeh) rodavam pra sempre em GPU/CPU
+    // mesmo com o usuário já lendo o resto da página, custo desnecessário em
+    // Android intermediário.
+    let visible = true
+    const visibilityObserver = new IntersectionObserver(([entry]) => {
+      visible = entry.isIntersecting
+    })
+    visibilityObserver.observe(canvas)
+
     const drawQuad = () => gl.drawArrays(gl.TRIANGLES, 0, 3)
     const bindTarget = (target: { fb: WebGLFramebuffer } | null) => {
       gl.bindFramebuffer(gl.FRAMEBUFFER, target ? target.fb : null)
@@ -427,7 +438,7 @@ export function HeroWebGLBackground({ darkMode }: Props) {
 
     const render = (now: number) => {
       rafId = requestAnimationFrame(render)
-      if (scrolling || !pingFb || !pongFb) return
+      if (scrolling || !visible || !pingFb || !pongFb) return
 
       pointerSmoothed.x += (pointerTarget.x - pointerSmoothed.x) * 0.1
       pointerSmoothed.y += (pointerTarget.y - pointerSmoothed.y) * 0.1
@@ -520,6 +531,7 @@ export function HeroWebGLBackground({ darkMode }: Props) {
     return () => {
       cancelAnimationFrame(rafId)
       resizeObserver.disconnect()
+      visibilityObserver.disconnect()
       window.removeEventListener("pointermove", onPointerMove)
       window.removeEventListener("scroll", onScroll, true)
       clearTimeout(scrollTimer)

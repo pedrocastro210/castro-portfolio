@@ -61,10 +61,22 @@ export function SmokeCanvas() {
     window.addEventListener("pointermove", handlePointerMove)
     window.addEventListener("pointerleave", handlePointerLeave)
 
+    // Sem isso, os 14 wisps continuam recriando um radial gradient por frame
+    // (14 gradientes/frame) pra sempre, mesmo com a Hero fora da tela depois
+    // que o usuário rola pro resto da página.
+    let visible = true
+    const visibilityObserver = new IntersectionObserver(([entry]) => {
+      visible = entry.isIntersecting
+    })
+    visibilityObserver.observe(canvas)
+
     let raf = 0
     let t = 0
 
     const tick = () => {
+      raf = requestAnimationFrame(tick)
+      if (!visible) return
+
       t += 0.006
       ctx.clearRect(0, 0, width, height)
 
@@ -96,13 +108,12 @@ export function SmokeCanvas() {
         ctx.fillStyle = gradient
         ctx.fillRect(drawX - wisp.r, drawY - wisp.r, wisp.r * 2, wisp.r * 2)
       }
-
-      raf = requestAnimationFrame(tick)
     }
     raf = requestAnimationFrame(tick)
 
     return () => {
       cancelAnimationFrame(raf)
+      visibilityObserver.disconnect()
       window.removeEventListener("resize", resize)
       window.removeEventListener("pointermove", handlePointerMove)
       window.removeEventListener("pointerleave", handlePointerLeave)
