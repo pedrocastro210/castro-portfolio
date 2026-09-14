@@ -12,13 +12,6 @@ export type Project = {
   thumbnail: string
   tags: string[]
   testimonial: Testimonial
-  // "redirect": navega direto pro demoPath em vez de exibir no iframe do
-  // DemoFrame. FisioFit e DentalCare têm no Hero uma revelação por máscara
-  // SVG (halter/dente) dentro de um sticky — no Safari/iOS isso só quebra
-  // quando embedado num iframe (confirmado testando o build direto, fora do
-  // iframe, no aparelho: funciona liso). Os outros projetos continuam no
-  // iframe normalmente.
-  openMode?: "iframe" | "redirect"
 }
 
 export const PROJECTS: Project[] = [
@@ -29,7 +22,6 @@ export const PROJECTS: Project[] = [
     demoPath: "/demos/fisiofit/index.html",
     thumbnail: "/img/fisiofit-preview.jpg",
     tags: ["Landing Page", "Saúde", "Copy persuasiva"],
-    openMode: "redirect",
     testimonial: {
       quote:
         "Antes o site passava insegurança logo na entrada. Depois que o Pedro remontou tudo, viramos a clínica que os pacientes mostram pra família antes de fechar a primeira consulta.",
@@ -86,7 +78,6 @@ export const PROJECTS: Project[] = [
     demoPath: "/demos/dentalcare/index.html",
     thumbnail: "/img/dentalcare-preview.jpg",
     tags: ["Landing Page", "Odontologia", "Scroll imersivo"],
-    openMode: "redirect",
     testimonial: {
       quote:
         "O efeito do dente se revelando no scroll virou assunto na sala de espera — paciente comenta antes de eu perguntar. Nunca imaginei que o site ajudaria a quebrar o gelo do consultório.",
