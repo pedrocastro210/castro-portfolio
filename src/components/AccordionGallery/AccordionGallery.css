@@ -34,7 +34,7 @@
   transform-origin: center center;
   background: #0a0713;
   box-shadow: 0 10px 30px -18px rgba(0, 0, 0, 0.8);
-  will-change: transform;
+  will-change: flex-grow, transform;
   -webkit-tap-highlight-color: transparent;
 }
 
