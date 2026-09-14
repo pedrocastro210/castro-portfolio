@@ -1,7 +1,10 @@
 import { useRef, useEffect, useState, useCallback } from 'react';
 import { gsap } from 'gsap';
+import { Flip } from 'gsap/Flip';
 
 import './AccordionGallery.css';
+
+gsap.registerPlugin(Flip);
 
 const DEFAULT_ITEMS = [
   { image: 'https://picsum.photos/id/1015/900/1200', label: 'Canyon', link: '#' },
@@ -62,7 +65,27 @@ const AccordionGallery = ({
 
       tlRef.current?.kill();
       const dur = animate && !prefersReduced ? duration : 0;
+      const validPanels = panels.filter(Boolean);
+
+      // FLIP: captura a geometria de cada painel ANTES de mudar o flex-grow
+      // (que redistribui a largura de toda a fileira via reflow), aplica o
+      // novo flex-grow de uma vez só, e anima a DIFERENÇA via transform
+      // (scale+translate) — muito mais barato que animar flex-grow direto
+      // (não é uma propriedade composta pelo GPU: forçava reflow de toda a
+      // fileira a cada frame do tween, tanto no hover quanto no tap em
+      // mobile).
+      const flipState = dur > 0 ? Flip.getState(validPanels) : null;
+
+      panels.forEach((panel, i) => {
+        if (!panel) return;
+        gsap.set(panel, { flexGrow: i === active ? grow : 1 });
+      });
+
       const tl = gsap.timeline();
+
+      if (flipState) {
+        tl.add(Flip.from(flipState, { targets: validPanels, duration: dur, ease }), 0);
+      }
 
       panels.forEach((panel, i) => {
         if (!panel) return;
@@ -74,7 +97,7 @@ const AccordionGallery = ({
         const rot = isActive ? 0 : i < active ? tilt : -tilt;
         const rotProp = vertical ? { rotateX: -rot } : { rotateY: rot };
 
-        tl.to(panel, { flexGrow: isActive ? grow : 1, ...rotProp, duration: dur, ease }, 0);
+        tl.to(panel, { ...rotProp, duration: dur, ease }, 0);
 
         if (media) {
           const drift = Math.max(-1.5, Math.min(1.5, active - i));
