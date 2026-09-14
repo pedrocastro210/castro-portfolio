@@ -35,23 +35,25 @@ export function useOcPageSetup() {
     // que não acompanha 1:1 um flick rápido de mouse/trackpad — evita que um
     // scroll rápido pule direto pra um progress alto do pin (Hero/Personas)
     // antes das tweens (scrub) terem chance de tocar os frames intermediários.
-    // Reduzido de duration:3.2/wheelMultiplier:0.4/touchMultiplier:0.6 (pedido
-    // do usuário, sentia o scroll pesado demais) — ainda suaviza o suficiente
-    // pra não atropelar as tweens, só com bem menos lag percebido.
+    // wheelMultiplier reduzido de 0.4 (pedido do usuário, sentia o scroll
+    // pesado demais no mouse/trackpad).
     // syncTouch: por padrão o Lenis só amortece a roda do mouse — touch cai
     // direto no scroll nativo do celular, sem passar por nenhum dos ajustes
     // acima. Isso deixava os pins/scrub (Hero, cards da Personas) reagindo a
-    // um flick de dedo cru, bem mais rápido que no desktop. syncTouchLerp
-    // mantém o toque ainda responsivo (não "emborrachado"), só suaviza o
-    // suficiente pra não atropelar as tweens.
+    // um flick de dedo cru, bem mais rápido que no desktop. touchMultiplier/
+    // syncTouchLerp foram afrouxados junto com o wheel, mas isso quebrou o
+    // scroll num iPhone X real (travando, textos cortados/cards atrasados —
+    // as tweens de scrub perdendo frames num flick rápido num aparelho mais
+    // fraco). Voltaram pra perto do valor original só no toque; o wheel
+    // continua mais leve.
     const lenis = new Lenis({
       duration: 1.6,
       easing: (t) => 1 - Math.pow(1 - t, 3),
       smoothWheel: true,
       wheelMultiplier: 0.75,
-      touchMultiplier: 0.9,
+      touchMultiplier: 0.65,
       syncTouch: true,
-      syncTouchLerp: 0.2,
+      syncTouchLerp: 0.12,
     })
     lenis.on("scroll", ScrollTrigger.update)
 
