@@ -72,6 +72,20 @@ export const PROJECTS: Project[] = [
     },
   },
   {
+    slug: "auge",
+    title: "Auge",
+    description: "Landing page editorial para personal trainer de alta performance, com scroll storytelling, cursor customizado e elemento 3D sutil.",
+    demoPath: "/demos/auge/index.html",
+    thumbnail: "/img/auge-preview.jpg",
+    tags: ["Landing Page", "Fitness", "Motion design"],
+    testimonial: {
+      quote:
+        "Meu público sempre valorizou mais estética do que preço baixo. Desde que o site ficou no ar, ninguém mais pergunta quanto custa antes de perguntar como funciona o método.",
+      author: "Bruno Salgado",
+      role: "Personal trainer de alta performance",
+    },
+  },
+  {
     slug: "dentalcare",
     title: "DENTALCARE",
     description: "Landing page para clínica odontológica, com hero de retrato e revelação em formato de dente no scroll.",
