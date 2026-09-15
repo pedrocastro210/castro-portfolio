@@ -99,6 +99,20 @@ export const PROJECTS: Project[] = [
       role: "Cirurgiã-dentista",
     },
   },
+  {
+    slug: "istore",
+    title: "iStore",
+    description: "Landing page premium para loja de iPhones, com hero animado por modelo/cor, tour de produto em vídeo scroll-scrubbed e comparador.",
+    demoPath: "/demos/istore/index.html",
+    thumbnail: "/img/istore-preview.jpg",
+    tags: ["Landing Page", "E-commerce", "Motion design"],
+    testimonial: {
+      quote:
+        "Cliente entrava, comparava preço e saía pra pesquisar em outro canto. Com o comparador e o vídeo do produto direto na página, boa parte já decide sem precisar de mais nenhuma pergunta.",
+      author: "Diego Farias",
+      role: "Gerente de loja de iPhones seminovos",
+    },
+  },
 ]
 
 export function getProjectBySlug(slug: string): Project | undefined {
