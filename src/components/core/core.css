@@ -1808,17 +1808,37 @@
    getBoundingClientRect de qualquer forma). Restaura o efeito de
    expandir/recolher no toque.
 
-   540px (era 380px): com min-height:56px por painel (ver AccordionGallery.css)
-   e 5 projetos, o piso sozinho já soma 5×56 + 4 gaps×10 = 320px — 380px só
-   deixava 60px de sobra pra distribuir via flexGrow entre os 5 painéis, ou
-   seja, o ativo mal crescia (~12px a mais que os outros) e na prática todo
-   mundo colapsava pro piso, sem expandir e sem dar pra ver o preview. Com
-   540px sobram ~220px de espaço livre, e o ativo (peso 12 dos 16 totais,
-   ver applyLayout em AccordionGallery.jsx) fica com ~220px de altura —
-   painel colapsado ~70px (mostra o título), ativo ~220px (mostra o
-   preview). */
+   650px (era 540px): a conta original foi feita pra 5 projetos, mas
+   data/projects.ts já tem 7. Com min-height:56px por painel (ver
+   AccordionGallery.css) e 7 projetos, o piso sozinho soma 6×56 + 6 gaps×10 =
+   396px — os 540px antigos só deixavam ~144px pro ativo (peso 18 dos 24
+   totais, ver applyLayout em AccordionGallery.jsx), mal dando pra ver o
+   preview, título e descrição juntos. Com 650px sobram ~254px pro ativo:
+   painel colapsado ~56px (mostra só o título), ativo ~254px (preview +
+   título + descrição + tags). Se o número de projetos mudar, refazer essa
+   conta (total = 396 + altura_ativo_desejada, ajustando o piso pro novo
+   n.º de painéis inativos). */
 .oc-projects-gallery .accordion-gallery--vertical {
-  height: 540px !important;
+  height: 650px !important;
+}
+
+/* O vendor calcula `--ag-media-size` (altura da imagem dentro do painel, ver
+   measure() em AccordionGallery.jsx) a partir do container inteiro
+   (650px × expandRatio × 1.22 ≈ 540px) — bem maior que os ~254px reais do
+   painel ativo (ver override de height acima), porque a fórmula assume o
+   ativo crescendo por uma fração livre do flexGrow sem considerar o piso de
+   min-height:56px dos painéis inativos. Como a imagem cobre essa altura
+   inteira (object-fit:cover) mas fica cortada pelo overflow:hidden do frame
+   (do tamanho real do painel), o preview aberto mostrava só uma fatia
+   central de ~254px de uma imagem "esticada" pra 540px — um zoom bem maior
+   que o necessário. --ag-media-size é custom property e aceita o mesmo
+   truque de especificidade usado no height acima (!important vence o
+   inline setado via JS). 270px = ~254px do painel ativo + uma margem pequena
+   pra cobrir o drift/parallax dos painéis vizinhos ao trocar de ativo, sem
+   sobrar corte demais. Se a altura do ativo mudar (recalculada acima),
+   ajustar este valor junto. */
+.oc-projects-gallery .accordion-gallery--vertical {
+  --ag-media-size: 270px !important;
 }
 
 
