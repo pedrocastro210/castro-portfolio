@@ -66,6 +66,7 @@ export function ProjectsPage() {
       <FloatingQr />
       <main>
         <section className="oc-projects-hero">
+          <div className="w-full bg-white h-[1rem] relative top-[4px] z-2 sm:top-[7px]"></div>
           <div className="oc-projects-head" ref={headRef}>
             {/* React Bits MaskedHeading (ver MaskedHeading.tsx) — vídeo aéreo de
                 praia/falésias (acervo público, cedido pelo Pedro) tocando por
@@ -91,6 +92,8 @@ export function ProjectsPage() {
               lineHeight={1.02}
               textScale={0.105}
             />
+            <div className="w-full bg-white h-[1rem] relative top-[-22px]">
+            </div>
             <p>
               Não é um catálogo de peças estáticas — são páginas reais, no ar, que você navega do jeito que ficam
               pro cliente final.
