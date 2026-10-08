@@ -113,6 +113,20 @@ export const PROJECTS: Project[] = [
       role: "Gerente de loja de iPhones seminovos",
     },
   },
+  {
+    slug: "irepair",
+    title: "iFix",
+    description: "Landing page para assistência técnica de iPhone, com hero em parallax 3D, comparador antes/depois e simulador de orçamento direto para o WhatsApp.",
+    demoPath: "/demos/irepair/index.html",
+    thumbnail: "/img/irepair-preview.jpg",
+    tags: ["Landing Page", "Assistência técnica", "Motion design"],
+    testimonial: {
+      quote:
+        "Metade do meu dia era responder quanto custa trocar uma tela. Agora o cliente simula o orçamento no site e já chega no WhatsApp com modelo e problema escritos — é só confirmar o horário.",
+      author: "Lucas Andrade",
+      role: "Técnico e dono de assistência de iPhone",
+    },
+  },
 ]
 
 export function getProjectBySlug(slug: string): Project | undefined {
