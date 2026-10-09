@@ -127,6 +127,20 @@ export const PROJECTS: Project[] = [
       role: "Técnico e dono de assistência de iPhone",
     },
   },
+  {
+    slug: "aesthetic",
+    title: "Lys Estética",
+    description: "Landing page para clínica de estética avançada, com retrato em vídeo com marcadores de diagnóstico, scroll storytelling em etapas e mural 3D de depoimentos.",
+    demoPath: "/demos/aesthetic/index.html",
+    thumbnail: "/img/aesthetic-preview.jpg",
+    tags: ["Landing Page", "Estética", "Scroll storytelling"],
+    testimonial: {
+      quote:
+        "As pacientes chegavam com medo de ficar artificial. Agora elas entendem o diagnóstico e o plano antes mesmo da avaliação — e já mandam mensagem dizendo qual tratamento querem conhecer.",
+      author: "Juliana Martins",
+      role: "Biomédica esteta e sócia de clínica",
+    },
+  },
 ]
 
 export function getProjectBySlug(slug: string): Project | undefined {
