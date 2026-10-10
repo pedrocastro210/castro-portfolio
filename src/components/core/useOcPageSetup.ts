@@ -63,11 +63,18 @@ export function useOcPageSetup() {
 
     const refreshId = requestAnimationFrame(() => ScrollTrigger.refresh())
 
+    // Sem ScrollTrigger.getAll().forEach(kill) aqui: cada componente cria os
+    // seus dentro de useGSAP, que já os reverte no próprio unmount. O kill
+    // global quebrava a navegação SPA (home → /projetos): o useGSAP da
+    // página nova roda em layout effect, ANTES deste cleanup (passive
+    // effect) da página antiga — então o kill levava junto os triggers
+    // recém-criados da página nova, e tudo que entra por scroll (depoimentos,
+    // footer) ficava preso em opacity:0 até recarregar. Só aparecia no build
+    // de produção: no dev o StrictMode remonta os efeitos e recriava tudo.
     return () => {
       cancelAnimationFrame(refreshId)
       gsap.ticker.remove(tick)
       lenis.destroy()
-      ScrollTrigger.getAll().forEach((st) => st.kill())
     }
   }, [])
 }
