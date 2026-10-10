@@ -1,4 +1,4 @@
-import { useRef, useState } from "react"
+import { useRef, useState, type CSSProperties } from "react"
 import { useGSAP } from "@gsap/react"
 import { gsap } from "../components/core/gsap"
 import "../components/core/core.css"
@@ -6,7 +6,7 @@ import { useOcPageSetup } from "../components/core/useOcPageSetup"
 import { Nav } from "../components/core/Nav"
 import { FloatingQr } from "../components/core/FloatingQr"
 import { Footer } from "../components/core/Footer"
-import { TestimonialsGlow } from "../components/core/TestimonialsGlow"
+import { TestimonialsMarquee } from "../components/core/TestimonialsMarquee"
 import { PhoneShowcase } from "../components/core/PhoneShowcase"
 import { MaskedHeading } from "../components/core/MaskedHeading"
 import { PROJECTS } from "../data/projects"
@@ -28,6 +28,27 @@ const GALLERY_ITEMS = PROJECTS.map((project) => ({
 // altura fixa sobrescrita em .oc-projects-gallery, ver
 // core.css) pra restaurar o efeito no toque.
 const MOBILE_QUERY = "(max-width: 520px)"
+
+// AUGE abre expandido por padrão (pedido explícito) — por slug, não por
+// índice fixo, pra não trocar de projeto quando a ordem de projects.ts mudar.
+const DEFAULT_GALLERY_INDEX = Math.max(
+  PROJECTS.findIndex((project) => project.slug === "auge"),
+  0,
+)
+
+// Altura da galeria vertical (mobile) derivada da quantidade de projetos, em
+// vez de um valor fixo no CSS: cada painel recolhido tem piso de 56px
+// (min-height em AccordionGallery.css) + 10px de gap, e o ativo precisa de
+// ~440px pra deixar o preview visível com folga acima do bloco de título +
+// descrição + tags (ancorado no rodapé do painel). Com valor fixo, cada
+// projeto novo comia espaço do ativo até ele mal abrir (650px com 9 projetos
+// deixava ~122px). Consumido em core.css via --oc-gallery-h e
+// --oc-gallery-media.
+const MOBILE_COLLAPSED = 56
+const MOBILE_GAP = 10
+const MOBILE_ACTIVE = 440
+const MOBILE_GALLERY_HEIGHT =
+  (GALLERY_ITEMS.length - 1) * (MOBILE_COLLAPSED + MOBILE_GAP) + MOBILE_ACTIVE
 
 export function ProjectsPage() {
   const [theme, setTheme] = useState<"dark" | "light">("light")
@@ -102,10 +123,19 @@ export function ProjectsPage() {
         </section>
 
         <section className="oc-projects-grid-section">
-          <div className="oc-projects-gallery" ref={galleryRef}>
+          <div
+            className="oc-projects-gallery"
+            ref={galleryRef}
+            style={
+              {
+                "--oc-gallery-h": `${MOBILE_GALLERY_HEIGHT}px`,
+                "--oc-gallery-media": `${MOBILE_ACTIVE + 16}px`,
+              } as CSSProperties
+            }
+          >
             <AccordionGallery
               items={GALLERY_ITEMS}
-              defaultIndex={2}
+              defaultIndex={DEFAULT_GALLERY_INDEX}
               // No mobile, expandRatio=0.52 (o valor pedido, pensado pra
               // galeria horizontal) rende quase imperceptível: com só 2
               // itens o painel ativo fica a ~52% contra ~48% do outro — uma
@@ -121,10 +151,11 @@ export function ProjectsPage() {
           </div>
         </section>
 
-        {/* Depoimentos mock, um por projeto — deixados explicitamente como
-            simulação no texto de apoio da seção (ver TestimonialsGlow.tsx),
-            já que os 5 negócios são peças de portfólio, não clientes reais. */}
-        <TestimonialsGlow />
+        {/* Depoimentos mock (um por projeto + extras, ver data/testimonials.ts)
+            — deixados explicitamente como simulação no texto de apoio da
+            seção (ver TestimonialsMarquee.tsx), já que os negócios são peças
+            de portfólio, não clientes reais. */}
+        <TestimonialsMarquee />
 
         {/* Mesma seção de fechamento (fundo + astronauta) da home — trocamos
             aqui o CTA de texto simples que só linkava pro WhatsApp por essa
