@@ -1443,97 +1443,175 @@
   margin: 0 auto;
 }
 
-/* Flex, não grid: com grid, uma linha final incompleta (o 5º card sozinho)
-   fica encostada à esquerda, porque todas as linhas herdam as mesmas
-   colunas da primeira. Com flex-wrap, cada linha é independente e
-   justify-content:center centraliza tanto os 5 numa linha só (telas
-   largas) quanto o resto sozinho numa segunda linha (telas médias). */
-.oc-testimonials-grid {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 1.25rem;
-}
-
-.oc-testimonials-grid > * {
-  flex: 1 1 220px;
-  max-width: 280px;
-}
-
-/* Só layout/tipografia aqui — a casca visual (fundo/borda/sombra/brilho) é
-   o BorderGlow por fora (ver TestimonialsGlow.tsx). Cor de fundo do
-   BorderGlow é escura fixa (não segue o tema claro/escuro da página, mesma
-   lógica de .oc-highlight-card), por isso o texto abaixo é fixo claro em
-   vez de usar os tokens --oc-fg/--oc-fg-muted (que mudam com o tema). */
-.oc-testimonial-card {
+/* Marquee vertical em 3D (ver TestimonialsMarquee.tsx). O palco recorta e
+   esfuma as quatro bordas com mask-image em vez de gradientes da cor de
+   fundo por cima: a seção não tem fundo próprio (herda o da página, que
+   muda com o tema), então uma máscara funciona em qualquer tema sem
+   precisar saber a cor. */
+.oc-tm-stage {
   position: relative;
-  margin: 0;
-  padding: 2rem 1.75rem 1.75rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
-  opacity: 0;
-}
-
-.oc-testimonial-mark {
-  position: relative;
-  font-family: var(--font-display, Georgia, serif);
-  font-size: 3.5rem;
-  line-height: 1;
-  height: 1.75rem;
-  color: var(--oc-primary-2);
-  opacity: 0.55;
-}
-
-.oc-testimonial-card blockquote {
-  position: relative;
-  margin: 0;
-  color: #f5f5f7;
-  font-size: 1.02rem;
-  line-height: 1.6;
-}
-
-.oc-testimonial-card figcaption {
-  position: relative;
+  height: clamp(26rem, 62vh, 36rem);
+  max-width: 64rem;
+  margin: 0 auto;
+  overflow: hidden;
   display: flex;
   align-items: center;
-  gap: 0.85rem;
-  margin-top: auto;
-  padding-top: 1.25rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.14);
+  justify-content: center;
+  perspective: 300px;
+  opacity: 0;
+  -webkit-mask-image:
+    linear-gradient(to bottom, transparent, #000 22%, #000 78%, transparent),
+    linear-gradient(to right, transparent, #000 18%, #000 82%, transparent);
+  -webkit-mask-composite: source-in;
+  mask-image:
+    linear-gradient(to bottom, transparent, #000 22%, #000 78%, transparent),
+    linear-gradient(to right, transparent, #000 18%, #000 82%, transparent);
+  mask-composite: intersect;
 }
 
-.oc-testimonial-avatar {
+/* Mesma inclinação do layout de referência. */
+.oc-tm-tilt {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  transform: translateX(-100px) translateZ(-100px) rotateX(20deg) rotateY(-10deg) rotateZ(20deg);
+}
+
+.oc-tm-column {
+  --oc-tm-gap: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: var(--oc-tm-gap);
+  overflow: hidden;
+  padding: 0.5rem;
+}
+
+.oc-tm-track {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  gap: var(--oc-tm-gap);
+  animation: oc-tm-scroll 48s linear infinite;
+}
+
+.oc-tm-track--reverse {
+  animation-direction: reverse;
+}
+
+.oc-tm-column:hover .oc-tm-track,
+.oc-tm-column:focus-within .oc-tm-track {
+  animation-play-state: paused;
+}
+
+@keyframes oc-tm-scroll {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(calc(-100% - var(--oc-tm-gap)));
+  }
+}
+
+/* Cards em superfície do tema (não um fundo escuro fixo): no marquee eles
+   são pequenos e muitos, e uma parede de cards escuros pesava demais no
+   tema claro. */
+.oc-tm-card {
+  width: 15rem;
+  margin: 0;
+  padding: 1.1rem 1.15rem 1.2rem;
+  border-radius: 0.85rem;
+  border: 1px solid var(--oc-border);
+  background: var(--oc-surface);
+  box-shadow: 0 10px 30px -20px rgba(0, 0, 0, 0.45);
+}
+
+.oc-tm-card figcaption {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.oc-tm-avatar {
   flex: 0 0 auto;
-  width: 44px;
-  height: 44px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.85rem;
-  font-weight: 700;
-  color: #fff;
-  background: linear-gradient(135deg, var(--oc-primary), var(--oc-primary-2));
-  box-shadow: 0 0 0 3px color-mix(in oklab, var(--oc-primary-2) 25%, transparent);
+  font-size: 0.75rem;
+  font-weight: 600;
+  /* Degradê pastel por pessoa, vindo de --oc-tm-tone (ver AVATAR_TONES em
+     TestimonialsMarquee.tsx). Tinta escura fixa nos dois temas: o fundo é
+     sempre claro, então texto branco perdia contraste. */
+  color: #16131c;
+  background: var(--oc-tm-tone, linear-gradient(135deg, #ddcdf5, #c6aeec));
 }
 
-.oc-testimonial-who {
+.oc-tm-who {
   display: flex;
   flex-direction: column;
-  gap: 0.15rem;
   min-width: 0;
 }
 
-.oc-testimonial-name {
+.oc-tm-name {
   font-weight: 600;
-  font-size: 0.92rem;
-  color: #f5f5f7;
+  font-size: 0.875rem;
+  color: var(--oc-fg);
 }
 
-.oc-testimonial-role {
-  color: rgba(245, 245, 247, 0.65);
-  font-size: 0.8rem;
+.oc-tm-role {
+  color: var(--oc-fg-faint);
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1.35;
+}
+
+.oc-tm-card blockquote {
+  margin: 0.75rem 0 0;
+  color: var(--oc-fg-muted);
+  font-size: 0.875rem;
+  line-height: 1.55;
+}
+
+/* Mobile: mesma parede inclinada, com os valores do demo Lys Estética
+   (public/demos/aesthetic) — perspectiva e rotação um pouco mais suaves e
+   sem o deslocamento lateral do desktop, que no celular jogava a coluna do
+   meio pra fora do centro. A 4ª coluna some: com 3, uma fica no centro e as
+   outras duas nas pontas, esmaecidas pela máscara horizontal (mais larga
+   aqui que no desktop). */
+@media (max-width: 520px) {
+  .oc-tm-stage {
+    height: 30rem;
+    perspective: 340px;
+    -webkit-mask-image:
+      linear-gradient(to bottom, transparent, #000 22%, #000 78%, transparent),
+      linear-gradient(to right, transparent, #000 22%, #000 78%, transparent);
+    mask-image:
+      linear-gradient(to bottom, transparent, #000 22%, #000 78%, transparent),
+      linear-gradient(to right, transparent, #000 22%, #000 78%, transparent);
+  }
+
+  .oc-tm-tilt {
+    transform: translateZ(-90px) rotateX(18deg) rotateY(-10deg) rotateZ(18deg);
+  }
+
+  .oc-tm-column:nth-child(4) {
+    display: none;
+  }
+
+  .oc-tm-card {
+    width: 13rem;
+  }
+}
+
+/* O bloco global de reduced-motion (fim deste arquivo) só encurta a
+   duração — num loop infinito isso vira um tremor rápido em vez de parar.
+   Aqui a rolagem para de vez; a primeira cópia continua legível. */
+@media (prefers-reduced-motion: reduce) {
+  .oc-tm-track {
+    animation: none;
+  }
 }
 
 /* Clicável pra repetir a coreografia depois que os cards somem (ver
@@ -1808,37 +1886,23 @@
    getBoundingClientRect de qualquer forma). Restaura o efeito de
    expandir/recolher no toque.
 
-   650px (era 540px): a conta original foi feita pra 5 projetos, mas
-   data/projects.ts já tem 7. Com min-height:56px por painel (ver
-   AccordionGallery.css) e 7 projetos, o piso sozinho soma 6×56 + 6 gaps×10 =
-   396px — os 540px antigos só deixavam ~144px pro ativo (peso 18 dos 24
-   totais, ver applyLayout em AccordionGallery.jsx), mal dando pra ver o
-   preview, título e descrição juntos. Com 650px sobram ~254px pro ativo:
-   painel colapsado ~56px (mostra só o título), ativo ~254px (preview +
-   título + descrição + tags). Se o número de projetos mudar, refazer essa
-   conta (total = 396 + altura_ativo_desejada, ajustando o piso pro novo
-   n.º de painéis inativos). */
+   A altura vem de --oc-gallery-h, calculada em ProjectsPage.tsx a partir
+   da quantidade de projetos (piso dos recolhidos + ~440px pro ativo) — o
+   valor fixo antigo (650px) ia sobrando cada vez menos pro painel ativo a
+   cada projeto novo. */
 .oc-projects-gallery .accordion-gallery--vertical {
-  height: 650px !important;
+  height: var(--oc-gallery-h, 650px) !important;
 }
 
 /* O vendor calcula `--ag-media-size` (altura da imagem dentro do painel, ver
-   measure() em AccordionGallery.jsx) a partir do container inteiro
-   (650px × expandRatio × 1.22 ≈ 540px) — bem maior que os ~254px reais do
-   painel ativo (ver override de height acima), porque a fórmula assume o
-   ativo crescendo por uma fração livre do flexGrow sem considerar o piso de
-   min-height:56px dos painéis inativos. Como a imagem cobre essa altura
-   inteira (object-fit:cover) mas fica cortada pelo overflow:hidden do frame
-   (do tamanho real do painel), o preview aberto mostrava só uma fatia
-   central de ~254px de uma imagem "esticada" pra 540px — um zoom bem maior
-   que o necessário. --ag-media-size é custom property e aceita o mesmo
-   truque de especificidade usado no height acima (!important vence o
-   inline setado via JS). 270px = ~254px do painel ativo + uma margem pequena
-   pra cobrir o drift/parallax dos painéis vizinhos ao trocar de ativo, sem
-   sobrar corte demais. Se a altura do ativo mudar (recalculada acima),
-   ajustar este valor junto. */
+   measure() em AccordionGallery.jsx) a partir do container inteiro, sem
+   considerar o piso de min-height:56px dos painéis inativos — a imagem
+   ficava "esticada" pra bem mais que a altura real do ativo e o preview
+   mostrava só uma fatia central. --oc-gallery-media (ProjectsPage.tsx) =
+   altura do ativo + uma margem pro drift/parallax ao trocar de painel;
+   !important vence o inline setado via JS. */
 .oc-projects-gallery .accordion-gallery--vertical {
-  --ag-media-size: 270px !important;
+  --ag-media-size: var(--oc-gallery-media, 270px) !important;
 }
 
 
