@@ -11,7 +11,8 @@ export type Project = {
   demoPath: string
   thumbnail: string
   tags: string[]
-  testimonial: Testimonial
+  // Opcional: projetos de cliente real entram sem depoimento simulado.
+  testimonial?: Testimonial
 }
 
 export const PROJECTS: Project[] = [
@@ -140,6 +141,14 @@ export const PROJECTS: Project[] = [
       author: "Juliana Martins",
       role: "Biomédica esteta e sócia de clínica",
     },
+  },
+  {
+    slug: "vr-multimarcas",
+    title: "VR Multimarcas",
+    description: "Landing page cinematográfica para loja de motos zero km, com vídeo controlado pela rolagem, troca de modelos dentro da fumaça, raio-x da moto e showroom que leva direto ao WhatsApp.",
+    demoPath: "/demos/vr-multimarcas/index.html",
+    thumbnail: "/img/vr-multimarcas-preview.jpg",
+    tags: ["Landing Page", "Motos", "Motion design"],
   },
 ]
 
