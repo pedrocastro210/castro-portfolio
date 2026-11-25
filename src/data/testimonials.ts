@@ -67,7 +67,7 @@ const EXTRA_TESTIMONIALS: Testimonial[] = [
 // Intercala projeto/extra em vez de concatenar: o marquee distribui por
 // índice entre as colunas (ver TestimonialsMarquee.tsx), e assim os
 // depoimentos longos dos projetos não se amontoam nas mesmas colunas.
-const projectTestimonials = PROJECTS.map((project) => project.testimonial)
+const projectTestimonials = PROJECTS.flatMap((project) => (project.testimonial ? [project.testimonial] : []))
 
 export const TESTIMONIALS: Testimonial[] = Array.from(
   { length: Math.max(projectTestimonials.length, EXTRA_TESTIMONIALS.length) },
